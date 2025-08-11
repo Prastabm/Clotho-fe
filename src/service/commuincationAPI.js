@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const commUrl = 'http://localhost:8080/api/communication';
+const commUrl = 'https://clotho-monolithic.onrender.com/api/communication';
 
 /**
  * Helper function to get the authorization headers for admin actions.

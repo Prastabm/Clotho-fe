@@ -1,7 +1,7 @@
 // cartApi.js
 import axios from "axios";
 
-const cartUrl = 'http://localhost:8080/api/cart'; // Update to match your CartController's base URL
+const cartUrl = 'https://clotho-monolithic.onrender.com/api/cart'; // Update to match your CartController's base URL
 
 // Helper to get auth headers
 const getAuthHeaders = () => {

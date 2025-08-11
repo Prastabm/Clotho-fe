@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // The base URL for the new authentication service
-const authUrl = 'http://localhost:8080/auth';
-const userUrl = 'http://localhost:8090/api/users'; // Kept for other functions if needed
+const authUrl = 'https://clotho-monolithic.onrender.com/auth';
+const userUrl = 'https://clotho-monolithic.onrender.com/api/users'; // Kept for other functions if needed
 
 export const login = async (email, password) => {
     try {

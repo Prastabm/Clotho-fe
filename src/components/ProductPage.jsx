@@ -148,7 +148,7 @@ const ProductPage = () => {
             const parsedUser = storedUser ? JSON.parse(storedUser) : null;
             const idToken = parsedUser?.idToken;
 
-            const response = await axios.post('http://localhost:8080/products', formData, {
+            const response = await axios.post('https://clotho-monolithic.onrender.com/products', formData, {
                 headers: { Authorization: `Bearer ${idToken}` }
             });
 
@@ -219,7 +219,7 @@ const ProductPage = () => {
             const formDataForUpload = new FormData();
             formDataForUpload.append('file', selectedFile);
 
-            await axios.post(`http://localhost:8080/products/upload/${productId}`, formDataForUpload, {
+            await axios.post(`https://clotho-monolithic.onrender.com/products/upload/${productId}`, formDataForUpload, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
 
@@ -239,7 +239,7 @@ const ProductPage = () => {
             const parsedUser = storedUser ? JSON.parse(storedUser) : null;
             const idToken = parsedUser?.idToken;
 
-            await axios.delete(`http://localhost:8080/products/${id}`, {
+            await axios.delete(`https://clotho-monolithic.onrender.com/products/${id}`, {
                 headers: { Authorization: `Bearer ${idToken}` }
             });
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const orderUrl = 'http://localhost:8080/api/orders';
+const orderUrl = 'https://clotho-monolithic.onrender.com/api/orders';
 
 /**
  * Helper function to get the authorization headers.

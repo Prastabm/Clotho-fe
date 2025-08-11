@@ -82,7 +82,7 @@ function CheckoutForm() {
                 return;
             }
             try {
-                const res = await fetch("http://localhost:8080/api/checkout", {
+                const res = await fetch("https://clotho-monolithic.onrender.com/api/checkout", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

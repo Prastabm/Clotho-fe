@@ -22,7 +22,7 @@ export default function OrderPage() {
             }
 
             try {
-                const res = await fetch("http://localhost:8080/api/orders/me", {
+                const res = await fetch("https://clotho-monolithic.onrender.com/api/orders/me", {
                     headers: {
                         "Authorization": `Bearer ${user.idToken}`,
                     },

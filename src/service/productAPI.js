@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const productUrl='http://localhost:8080/products';
+const productUrl='https://clotho-monolithic.onrender.com/products';
 
 export const getTotalProducts = async () => {
     try {

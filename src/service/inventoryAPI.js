@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const inventoryUrl = 'http://localhost:8080/inventory';
+const inventoryUrl = 'https://clotho-monolithic.onrender.com/inventory';
 
 // Helper function to get auth token
 const getAuthHeaders = () => {
@@ -77,7 +77,7 @@ export const deleteInventory = async (id) => {
 export const calculateTotalInventoryValue = async () => {
     try {
         // First get all products
-        const products = await axios.get('http://localhost:8080/products', {
+        const products = await axios.get('https://clotho-monolithic.onrender.com/products', {
             headers: getAuthHeaders()
         });
 
@@ -109,6 +109,7 @@ export const getTotalInventoryItems = async () => {
     try {
         const inventoryLevels = await getAllInventoryLevels();
         const totalItems = inventoryLevels.reduce((sum, item) => sum + item.quantity, 0);
+        console.log("Total items:",totalItems);
         return totalItems;
     } catch (error) {
         console.error('Error getting total inventory count:', error);
@@ -118,7 +119,7 @@ export const getTotalInventoryItems = async () => {
 // Get all inventory levels (useful for dashboard)
 export const getAllInventoryLevels = async () => {
     try {
-        const products = await axios.get('http://localhost:8080/products', {
+        const products = await axios.get('https://clotho-monolithic.onrender.com/products', {
             headers: getAuthHeaders()
         });
 
