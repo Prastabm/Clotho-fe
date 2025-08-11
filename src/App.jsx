@@ -17,7 +17,7 @@ import UserNavbar from "@/components/UserNavbar.jsx";
 import CartPage from "@/components/cartPage.jsx";
 import CheckoutPage from "./components/CheckoutPage.jsx";
 import OrderPage from "@/components/OrdersPage.jsx"; // Corrected import path
-import ContactUs from "@/components/ContactUs.jsx";
+import ContactUs from "@/components/contactUs.jsx";
 import CommunicationPage from "@/components/CommunicationPage.jsx"; // Import the new component
 
 // Layout Component
