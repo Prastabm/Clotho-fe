@@ -20,7 +20,7 @@ This platform provides a robust set of features for both administrators and cust
 - **Payment Integration:** The platform is integrated with a secure payment gateway (Stripe).
 - **Communication:** Customers can send messages to the support team and view replies.
 ## Architecture Overview
-The system is built with a **monolithic backend** and a separate front end. This means all the core business logic for users, products, and orders is handled within a single, unified backend application. This approach simplifies development and deployment. The front end communicates directly with the backend's API endpoints.
+The system is built with a **monolithic backend** and a separate front end. This means all the core business logic for users, products, and orders is handled within a single, unified backend application. This approach simplifies development and deployment. The front end communicates directly with the backend's REST API endpoints.
 
 ## System Components
 ### Frontend
