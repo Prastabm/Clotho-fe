@@ -1,26 +1,30 @@
 import React, { useEffect, useState } from "react";
+// START: Replaced 'sonner' with 'react-hot-toast' for consistency
+import { toast, Toaster } from "react-hot-toast";
+// END: Replaced 'sonner'
 import {
     getCartItems,
     updateCartItem,
     removeCartItem,
 } from "../service/cartAPI";
-import {getProductBySkuCode} from "../service/productAPI";
+import { getProductBySkuCode } from "../service/productAPI";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+
 export default function CartPage() {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const totalPrice1 = cartItems.reduce(
+    const navigate = useNavigate();
+
+    const totalPrice = cartItems.reduce(
         (acc, item) => acc + item.price * item.quantity,
         0
     );
-    const navigate = useNavigate();
+
     const handleProceedToCheckout = () => {
-        // Pass the total price in the state object during navigation
-        navigate("/checkout", { state: { amount: totalPrice1 } });
+        navigate("/checkout", { state: { amount: totalPrice } });
     };
 
     useEffect(() => {
@@ -30,7 +34,6 @@ export default function CartPage() {
     const fetchCartWithProducts = async () => {
         try {
             const cart = await getCartItems();
-
             const enrichedCart = await Promise.all(
                 cart.map(async (cartItem) => {
                     const product = await getProductBySkuCode(cartItem.skuCode);
@@ -42,11 +45,10 @@ export default function CartPage() {
                     };
                 })
             );
-
             setCartItems(enrichedCart);
         } catch (error) {
             console.error("Failed to load cart items:", error);
-            toast.error("Failed to load cart");
+            toast.error("Failed to load your cart.");
         } finally {
             setLoading(false);
         }
@@ -63,9 +65,9 @@ export default function CartPage() {
                     item.id === itemId ? { ...item, quantity: newQty } : item
                 )
             );
-            toast.success("Quantity updated");
+            toast.success("Quantity updated!");
         } catch (error) {
-            toast.error("Failed to update quantity");
+            toast.error("Failed to update quantity.");
             console.error("Failed to update quantity:", error);
         }
     };
@@ -76,20 +78,19 @@ export default function CartPage() {
             setCartItems((prevItems) =>
                 prevItems.filter((item) => item.id !== itemId)
             );
-            toast.success("Item removed from cart");
+            toast.success("Item removed from cart.");
         } catch (error) {
-            toast.error("Failed to remove item");
+            toast.error("Failed to remove item.");
             console.error("Failed to remove item:", error);
         }
     };
 
-    const totalPrice = cartItems.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
-    );
-
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* START: Added Toaster component */}
+            <Toaster position="top-right" reverseOrder={false} />
+            {/* END: Added Toaster component */}
+
             {/* Cart Items */}
             <div className="md:col-span-2">
                 <h2 className="text-xl font-semibold mb-4">Your Cart</h2>
@@ -112,12 +113,12 @@ export default function CartPage() {
                                 >
                                     <td className="p-3">
                                         <div className="flex flex-col">
-                                                <span className="font-medium">
-                                                    {item.productName}
-                                                </span>
+                                            <span className="font-medium">
+                                                {item.productName}
+                                            </span>
                                             <span className="text-sm text-muted-foreground">
-                                                    {item.skuCode}
-                                                </span>
+                                                {item.skuCode}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="p-3 text-center">
@@ -136,8 +137,8 @@ export default function CartPage() {
                                                 <Minus size={14} />
                                             </Button>
                                             <span className="min-w-[20px] text-sm font-semibold">
-                                                    {item.quantity}
-                                                </span>
+                                                {item.quantity}
+                                            </span>
                                             <Button
                                                 size="icon"
                                                 variant="outline"

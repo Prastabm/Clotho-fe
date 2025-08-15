@@ -1,7 +1,7 @@
 // CheckoutPage.jsx
 
 import React, { useContext, useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation, useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import {
     Elements,
@@ -14,7 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+// START: Replaced 'sonner' with 'react-hot-toast'
+import { toast, Toaster } from "react-hot-toast";
+// END: Replaced 'sonner'
 
 // Your publishable key
 const stripePromise = loadStripe("pk_test_51RtrPaCyBBmYSliqIvj10wMPVCOb4axz3WKt7X05WsNjED9uKxgGK3Ama91WAyrgi292EDbKIdLVw4LW7hECPRBE0071OpcxQV");
@@ -48,11 +50,11 @@ function SuccessModal({ onRedirect }) {
 function CheckoutForm() {
     const stripe = useStripe();
     const elements = useElements();
-    const navigate = useNavigate(); // Hook for navigation
+    const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const [clientSecret, setClientSecret] = useState("");
     const [loading, setLoading] = useState(false);
-    const [showSuccessModal, setShowSuccessModal] = useState(false); // State for success modal
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
 
     // Form state for shipping details
     const [email, setEmail] = useState('');
@@ -110,6 +112,7 @@ function CheckoutForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!stripe || !elements || !clientSecret) {
+            toast.error("Payment system is not ready yet.");
             return;
         }
         setLoading(true);
@@ -134,16 +137,14 @@ function CheckoutForm() {
         setLoading(false);
 
         if (result.error) {
-            toast.error(result.error.message);
+            toast.error(result.error.message || "An unexpected error occurred.");
         } else if (result.paymentIntent.status === "succeeded") {
-            // **MODIFICATION**: Show success modal instead of toast
             setShowSuccessModal(true);
         }
     };
 
     return (
         <>
-            {/* Render success modal when payment is successful */}
             {showSuccessModal && (
                 <SuccessModal onRedirect={() => navigate('/user-homepage')} />
             )}
@@ -160,28 +161,28 @@ function CheckoutForm() {
                             {/* Shipping Details Section */}
                             <div className="space-y-4">
                                 <div>
-                                    <Label htmlFor="name">Full Name</Label>
+                                    <div className="mb-1"><Label htmlFor="name">Full Name</Label></div>
                                     <Input id="name" name="name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required />
                                 </div>
                                 <div>
-                                    <Label htmlFor="email">Email Address</Label>
+                                    <div className="mb-1"><Label htmlFor="email">Email Address</Label></div>
                                     <Input id="email" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required />
                                 </div>
                                 <div>
-                                    <Label htmlFor="line1">Address</Label>
+                                    <div className="mb-1"><Label htmlFor="line1">Address</Label></div>
                                     <Input id="line1" name="line1" type="text" value={address.line1} onChange={handleAddressChange} placeholder="1234 Main St" required />
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
-                                        <Label htmlFor="city">City</Label>
+                                        <div className="mb-1"><Label htmlFor="city">City</Label></div>
                                         <Input id="city" name="city" type="text" value={address.city} onChange={handleAddressChange} placeholder="Anytown" required />
                                     </div>
                                     <div>
-                                        <Label htmlFor="state">State / Province</Label>
+                                        <div className="mb-1"><Label htmlFor="state">State / Province</Label></div>
                                         <Input id="state" name="state" type="text" value={address.state} onChange={handleAddressChange} placeholder="CA" required />
                                     </div>
                                     <div>
-                                        <Label htmlFor="postal_code">ZIP / Postal</Label>
+                                        <div className="mb-1"><Label htmlFor="postal_code">ZIP / Postal</Label></div>
                                         <Input id="postal_code" name="postal_code" type="text" value={address.postal_code} onChange={handleAddressChange} placeholder="12345" required />
                                     </div>
                                 </div>
@@ -233,6 +234,9 @@ function CheckoutForm() {
 export default function CheckoutPage() {
     return (
         <div className="min-h-screen bg-background px-4 py-8">
+            {/* START: Added Toaster component */}
+            <Toaster position="top-right" reverseOrder={false} />
+            {/* END: Added Toaster component */}
             <div className="max-w-5xl mx-auto">
                 <Elements stripe={stripePromise}>
                     <CheckoutForm />

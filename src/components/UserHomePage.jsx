@@ -1,7 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
+// START: Import toast and Toaster
+import { toast, Toaster } from 'react-hot-toast';
+// END: Import toast and Toaster
 import { getAllProducts } from '../service/productAPI';
-import { Search, Package, Eye, ShoppingCart, Image } from 'lucide-react';
-import {addToCart} from "@/service/cartAPI.js";
+import { Search, Package, Eye, ShoppingCart, Image, X } from 'lucide-react';
+import { addToCart } from "@/service/cartAPI.js";
 
 const UserHomePage = () => {
     const [products, setProducts] = useState([]);
@@ -38,19 +41,25 @@ const UserHomePage = () => {
         );
     }, [products]);
 
+    // START: Updated handleAddToCart with toast notifications
     const handleAddToCart = async (product) => {
         try {
-            await addToCart(product.skuCode, product.category,1, product.price);
+            await addToCart(product.skuCode, product.category, 1, product.price);
+            toast.success(`"${product.name}" added to cart!`);
             console.log(`Added "${product.name}" to cart successfully.`);
-            // Optionally show a success toast here
         } catch (error) {
+            toast.error(`Failed to add "${product.name}" to cart.`);
             console.error(`Failed to add "${product.name}" to cart:`, error.message);
-            // Optionally show an error toast here
         }
     };
+    // END: Updated handleAddToCart
 
     return (
         <div className="max-w-screen-xl mx-auto px-8 py-8 space-y-8">
+            {/* START: Add Toaster component here */}
+            <Toaster position="top-right" reverseOrder={false} />
+            {/* END: Add Toaster component here */}
+
             {/* Header */}
             <div>
                 <h2 className="text-3xl font-bold tracking-tight">Browse Products</h2>
@@ -72,7 +81,7 @@ const UserHomePage = () => {
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {filteredProducts.map((product) => (
-                    <div key={product.id} className="group relative bg-card border border-border rounded-lg p-6 hover:shadow transition-all duration-200">
+                    <div key={product.id} className="group relative bg-card border border-border rounded-lg p-6 hover:shadow-lg transition-all duration-200 flex flex-col">
                         {/* Product Image */}
                         <div className="relative w-full h-48 mb-4 bg-muted rounded-md overflow-hidden">
                             {product.imageUrl ? (
@@ -83,14 +92,14 @@ const UserHomePage = () => {
                                 </div>
                             )}
                             <div className="absolute top-2 right-2">
-                <span className="px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-md">
-                  {product.category || 'Uncategorized'}
-                </span>
+                                <span className="px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-md">
+                                  {product.category || 'Uncategorized'}
+                                </span>
                             </div>
                         </div>
 
                         {/* Product Info */}
-                        <div className="space-y-2">
+                        <div className="space-y-2 flex-grow">
                             <h3 className="text-lg font-semibold text-foreground">{product.name}</h3>
                             <p className="text-sm text-muted-foreground line-clamp-2">
                                 {product.description || 'No description available'}
@@ -128,9 +137,9 @@ const UserHomePage = () => {
             {/* Empty State */}
             {filteredProducts.length === 0 && (
                 <div className="text-center py-12">
-                    <Package className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-slate-400 mb-2">No products found</h3>
-                    <p className="text-slate-500">Try adjusting your search or check back later.</p>
+                    <Package className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-foreground mb-2">No products found</h3>
+                    <p className="text-muted-foreground">Try adjusting your search or check back later.</p>
                 </div>
             )}
 
@@ -138,14 +147,14 @@ const UserHomePage = () => {
             {showViewModal && selectedProduct && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
                     <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setShowViewModal(false)}></div>
-                    <div className="relative w-full max-w-2xl mx-4 bg-card border border-border rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
+                    <div className="relative w-full max-w-2xl mx-4 bg-card border border-border rounded-lg shadow-lg max-h-[90vh] flex flex-col">
                         <div className="flex items-center justify-between p-6 border-b border-border">
                             <h3 className="text-xl font-semibold text-foreground">Product Details</h3>
-                            <button onClick={() => setShowViewModal(false)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-                                ✕
+                            <button onClick={() => setShowViewModal(false)} className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <div className="p-6 space-y-6">
+                        <div className="p-6 space-y-6 overflow-y-auto">
                             {selectedProduct.imageUrl && (
                                 <div className="w-full h-64 bg-muted rounded-xl overflow-hidden">
                                     <img src={selectedProduct.imageUrl} alt={selectedProduct.name} className="w-full h-full object-cover" />
@@ -173,6 +182,18 @@ const UserHomePage = () => {
                                     <p className="text-foreground">{selectedProduct.description || 'No description available'}</p>
                                 </div>
                             </div>
+                        </div>
+                        <div className="flex items-center justify-end p-6 border-t border-border mt-auto">
+                            <button
+                                onClick={() => {
+                                    handleAddToCart(selectedProduct);
+                                    setShowViewModal(false);
+                                }}
+                                className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6 py-2"
+                            >
+                                <ShoppingCart className="mr-2 h-4 w-4" />
+                                Add to Cart
+                            </button>
                         </div>
                     </div>
                 </div>
