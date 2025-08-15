@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+// START: Added imports for toast notifications
+import { toast, Toaster } from 'react-hot-toast';
+// END: Added imports
 import {
     getAllInventoryLevels,
     createInventory,
@@ -42,6 +45,9 @@ const InventoryPage = () => {
             setTotalValue(total);
         } catch (error) {
             console.error('Failed to fetch inventory:', error);
+            // START: Added toast
+            toast.error('Failed to fetch inventory.');
+            // END: Added toast
         } finally {
             setLoading(false);
         }
@@ -56,14 +62,23 @@ const InventoryPage = () => {
         try {
             if (currentInventory.id) {
                 await updateInventory(currentInventory.id, currentInventory);
+                // START: Added toast
+                toast.success('Inventory updated successfully!');
+                // END: Added toast
             } else {
                 await createInventory(currentInventory);
+                // START: Added toast
+                toast.success('Inventory added successfully!');
+                // END: Added toast
             }
             setDialogOpen(false);
             setCurrentInventory({ id: null, skuCode: '', quantity: 0 });
             fetchInventory();
         } catch (error) {
             console.error('Failed to save inventory:', error);
+            // START: Added toast
+            toast.error('Failed to save inventory.');
+            // END: Added toast
         }
     };
 
@@ -71,9 +86,15 @@ const InventoryPage = () => {
         if (window.confirm('Are you sure you want to delete this inventory item?')) {
             try {
                 await deleteInventory(id);
+                // START: Added toast
+                toast.success('Inventory item deleted.');
+                // END: Added toast
                 fetchInventory();
             } catch (error) {
                 console.error('Failed to delete inventory:', error);
+                // START: Added toast
+                toast.error('Failed to delete inventory item.');
+                // END: Added toast
             }
         }
     };
@@ -84,6 +105,9 @@ const InventoryPage = () => {
 
     return (
         <div className="p-8">
+            {/* START: Added Toaster component to render notifications */}
+            <Toaster position="top-right" reverseOrder={false} />
+            {/* END: Added Toaster component */}
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold tracking-tight">Inventory Management</h2>
                 <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

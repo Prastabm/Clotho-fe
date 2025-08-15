@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import {getAllProducts, updateProduct} from '../service/productAPI';
+// START: Import toast and Toaster
+import { toast, Toaster } from 'react-hot-toast';
+// END: Import toast and Toaster
+import { getAllProducts, updateProduct } from '../service/productAPI';
 import { Search, Plus, Edit, Trash2, Upload, Package, Eye, X, Save, Image } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
@@ -89,12 +92,12 @@ const ProductPage = () => {
             setFilteredProducts(products);
         } catch (error) {
             console.error('Error fetching products:', error.message);
+            toast.error('Failed to fetch products.');
         } finally {
             setLoading(false);
         }
     };
 
-    // Use useCallback to memoize the search handler
     const handleSearch = useCallback((event) => {
         const value = event.target.value.toLowerCase();
         setSearchInput(value);
@@ -109,7 +112,6 @@ const ProductPage = () => {
         );
     }, [products]);
 
-    // Use useCallback to memoize the input change handler
     const handleInputChange = useCallback((e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -120,8 +122,8 @@ const ProductPage = () => {
 
     const handleFileChange = useCallback((e) => {
         const file = e.target.files[0];
-        setSelectedFile(file);
         if (file) {
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => setImagePreview(reader.result);
             reader.readAsDataURL(file);
@@ -130,12 +132,7 @@ const ProductPage = () => {
 
     const resetForm = useCallback(() => {
         setFormData({
-            name: '',
-            skuCode: '',
-            description: '',
-            category: '',
-            price: '',
-            imageUrl: ''
+            name: '', skuCode: '', description: '', category: '', price: '', imageUrl: ''
         });
         setSelectedFile(null);
         setImagePreview('');
@@ -156,10 +153,12 @@ const ProductPage = () => {
                 await handleImageUpload(response.data.id);
             }
 
+            toast.success('Product created successfully!');
             await fetchProducts();
             setShowCreateModal(false);
             resetForm();
         } catch (error) {
+            toast.error('Failed to create product.');
             console.error('Error creating product:', error.message);
         } finally {
             setLoading(false);
@@ -191,17 +190,18 @@ const ProductPage = () => {
                 skuCode: formData.skuCode,
             };
 
-            // Call the updated updateProduct function with the new signature
             await updateProduct(
-                selectedProduct.id, 
+                selectedProduct.id,
                 productData,
-                selectedFile  // Pass the file only if it exists
+                selectedFile
             );
 
+            toast.success('Product updated successfully!');
             await fetchProducts();
             setShowEditModal(false);
             resetForm();
         } catch (error) {
+            toast.error('Failed to update product.');
             console.error('Error updating product:', error.message);
         } finally {
             setLoading(false);
@@ -222,10 +222,10 @@ const ProductPage = () => {
             await axios.post(`https://clotho-monolithic.onrender.com/products/upload/${productId}`, formDataForUpload, {
                 headers: {
                     Authorization: `Bearer ${idToken}`,
-
                 }
             });
         } catch (error) {
+            toast.error('Image upload failed. Please try again.');
             console.error('Error uploading image:', error.message);
         }
     };
@@ -243,8 +243,10 @@ const ProductPage = () => {
                 headers: { Authorization: `Bearer ${idToken}` }
             });
 
+            toast.success('Product deleted successfully!');
             await fetchProducts();
         } catch (error) {
+            toast.error('Failed to delete product.');
             console.error('Error deleting product:', error.message);
         } finally {
             setLoading(false);
@@ -253,6 +255,10 @@ const ProductPage = () => {
 
     return (
         <div className="p-8 space-y-8">
+            {/* START: Add Toaster component */}
+            <Toaster position="top-right" reverseOrder={false} />
+            {/* END: Add Toaster component */}
+
             {/* Header */}
             <div>
                 <h2 className="text-3xl font-bold tracking-tight">Product Management</h2>
@@ -413,7 +419,6 @@ const ProductPage = () => {
                         required
                     />
 
-                    {/* Image Upload */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-foreground">Product Image</label>
                         <div className="flex items-center space-x-4">
@@ -504,7 +509,6 @@ const ProductPage = () => {
                         required
                     />
 
-                    {/* Image Upload */}
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-foreground">Product Image</label>
                         <div className="flex items-center space-x-4">
